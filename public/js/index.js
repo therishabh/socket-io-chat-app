@@ -70,14 +70,18 @@ socket.on('newLocationMessage', function (message) {
 document.getElementById("submit-btn").addEventListener('click', function (e) {
     e.preventDefault();
     let inputText = document.querySelector('input[name="message"]')
-    socket.emit('createMessage', {
-        from: "Rishabh",
-        text: inputText.value,
-    }, function (data) {
-        console.log("Got it : ", data);
-    });
-    //clear input
-    inputText.value = '';
+    if(inputText.value.trim().length > 0){
+        socket.emit('createMessage', {
+            from: "Rishabh",
+            text: inputText.value,
+        }, function (data) {
+            console.log("Got it : ", data);
+        });
+        //clear input
+        inputText.value = '';
+    }else{
+        alert('Please enter message text')
+    }
 })
 
 document.getElementById('send-location').addEventListener('click', function (e) {
