@@ -1,7 +1,31 @@
 let socket = io();
 
 socket.on('connect', function () {
-    console.log('connected to server');
+    const urlParams = new URLSearchParams(location.search);
+    const params = {
+        room: urlParams.get('room'),
+        name: urlParams.get('name')
+    }
+    socket.emit('join', params, function (error) {
+        if (error) {
+            alert(error);
+            window.location.href = '/';
+        } else {
+            console.log('everything is fine')
+        }
+    })
+})
+
+socket.on('updateUserList', function(userList) {
+    console.log(userList)
+    let ol = document.createElement('ol');
+    userList.forEach((item, key) => {
+        let li = document.createElement('li');
+        li.innerText = item;
+        ol.appendChild(li);
+    });
+    document.getElementById('users').innerHTML = ''
+    document.getElementById('users').append(ol);
 })
 
 socket.on('disconnect', function () {
