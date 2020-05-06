@@ -4,6 +4,7 @@ const publicPath = path.join(__dirname, './../public');
 const express = require('express');
 const socketIO = require('socket.io');
 const port = process.env.PORT || 3000;
+const { generateMessage, generateLocationMessage } = require('./utils/message');
 
 var app = express();
 let server = http.createServer(app)
@@ -14,34 +15,16 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
     console.log('A New user just connected');
 
-    socket.emit('newMessage', {
-        from : "Admin",
-        text : "Welcome to archchat Chat box",
-        createdAt : new Date().getTime()
-    });
+    socket.emit('newMessage', generateMessage('Admin', 'Welcome to archchat Chat box'));
 
-    socket.broadcast.emit('newMessage', {
-        from : 'Admin',
-        text : "New User Joined",
-        createdAt : new Date().getTime()
-    })
-
-    
-    // socket.emit('newMessage', {
-    //     name : "Lorem",
-    //     text : "Hello Lorem"
-    // });
+    socket.broadcast.emit('newMessage', generateMessage('Admin', 'New User Joined'))
 
     // listen event
     socket.on('createMessage', (message) => {
         console.log('Create Message', message);
 
         // == emit to everyone (include self)
-        // io.emit('newMessage', {
-        //     from : message.from,
-        //     text : message.text,
-        //     createdAt : new Date().getTime()
-        // });
+        io.emit('newMessage', generateMessage(message.from, message.text));
 
         // == emit to everyone (expect self)
         // socket.broadcast.emit('newMessage', {
@@ -51,6 +34,10 @@ io.on('connection', (socket) => {
         // });
 
     });
+
+    socket.on('createLocationMessage', (message) => {
+        io.emit('newLocationMessage', generateLocationMessage(message.from, message.lat, message.lng))
+    })
 
 
     socket.on('disconnect', () => {
