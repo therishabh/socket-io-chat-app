@@ -16,7 +16,7 @@ socket.on('connect', function () {
     })
 })
 
-socket.on('updateUserList', function(userList) {
+socket.on('updateUserList', function (userList) {
     console.log(userList)
     let ol = document.createElement('ol');
     userList.forEach((item, key) => {
@@ -66,11 +66,24 @@ socket.on('newLocationMessage', function (message) {
     scrollToBottom();
 })
 
+socket.on('newTypingMessage', function (message) {
+    const typingWrapper = document.getElementById('typing-wrap')
+    if (message) {
+        let divElement = document.createElement('div');
+        divElement.setAttribute('class', 'typing-text');
+        divElement.innerText = message;
+        typingWrapper.innerHTML = '';
+        typingWrapper.appendChild(divElement);
+    } else {
+        typingWrapper.innerHTML = '';
+    }
+})
+
 
 document.getElementById("submit-btn").addEventListener('click', function (e) {
     e.preventDefault();
     let inputText = document.querySelector('input[name="message"]')
-    if(inputText.value.trim().length > 0){
+    if (inputText.value.trim().length > 0) {
         socket.emit('createMessage', {
             from: "Rishabh",
             text: inputText.value,
@@ -79,8 +92,22 @@ document.getElementById("submit-btn").addEventListener('click', function (e) {
         });
         //clear input
         inputText.value = '';
-    }else{
+    } else {
         alert('Please enter message text')
+    }
+})
+
+var timeout;
+document.querySelector('input[name="message"]').addEventListener('keypress', function (e) {
+    if (e.which != 13) {
+        socket.emit('createTypingMessage', { typing: true })
+        clearTimeout(timeout)
+        timeout = setTimeout(function () {
+            console.log('foo')
+            socket.emit('createTypingMessage', { typing: false })
+        }, 3000)
+    } else {
+        clearTimeout(timeout)
     }
 })
 

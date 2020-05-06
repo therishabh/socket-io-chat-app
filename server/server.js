@@ -62,6 +62,12 @@ io.on('connection', (socket) => {
     socket.on('createLocationMessage', (message) => {
         let user = users.getUser(socket.id);
         io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, message.lat, message.lng))
+    });
+
+    socket.on('createTypingMessage', (message) => {
+        let user = users.getUser(socket.id);
+        let textMsg = message.typing ? `${user.name} is typing` : '';
+        socket.broadcast.to(user.room).emit('newTypingMessage', textMsg)
     })
 
 
