@@ -8,6 +8,10 @@ socket.on('disconnect', function () {
     console.log('disconnected from server');
 });
 
+function scrollToBottom() {
+    document.getElementById('messages').lastElementChild.scrollIntoView()
+}
+
 socket.on('newMessage', function (message) {
     // console.log('New Message', message);
     const formatedTime = moment(message.createdAt).format('LT');
@@ -20,6 +24,7 @@ socket.on('newMessage', function (message) {
     const div = document.createElement('div');
     div.innerHTML = html;
     document.getElementById('messages').appendChild(div);
+    scrollToBottom();
 });
 
 socket.on('newLocationMessage', function (message) {
@@ -32,19 +37,9 @@ socket.on('newLocationMessage', function (message) {
         createdAt: formatedTime
     })
     const div = document.createElement('div');
-    div.innerHTML = html;
+    div.innerHTML = html
     document.getElementById('messages').appendChild(div);
-
-
-    // const formatedTime = moment(message.createdAt).format('LT');
-    // let listElement = document.createElement('li');
-    // let anchorElement = document.createElement('a');
-    // anchorElement.setAttribute('target', '_blank');
-    // anchorElement.setAttribute('href', message.url);
-    // listElement.innerHTML = `${message.from} ${formatedTime} : `;
-    // anchorElement.innerText = `Current Location`;
-    // listElement.appendChild(anchorElement);
-    // document.getElementById('messages').append(listElement);
+    scrollToBottom();
 })
 
 
