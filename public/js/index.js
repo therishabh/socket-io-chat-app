@@ -108,6 +108,7 @@ document.querySelector('input[name="message"]').addEventListener('keypress', fun
         }, 3000)
     } else {
         clearTimeout(timeout)
+        socket.emit('createTypingMessage', { typing: false })
     }
 })
 
