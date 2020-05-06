@@ -9,24 +9,42 @@ socket.on('disconnect', function () {
 });
 
 socket.on('newMessage', function (message) {
-    console.log('New Message', message);
+    // console.log('New Message', message);
     const formatedTime = moment(message.createdAt).format('LT');
-    let liElement = document.createElement('li');
-    liElement.innerHTML = `${message.from} ${formatedTime} : ${message.text}`;
-    document.getElementById('messages').append(liElement);
+    const template = document.getElementById('list-item-template').innerHTML;
+    const html = Mustache.render(template, {
+        from: message.from,
+        text: message.text,
+        createdAt: formatedTime
+    })
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    document.getElementById('messages').appendChild(div);
 });
 
-socket.on('newLocationMessage', function(message) {
-    console.log('location Message', message);
+socket.on('newLocationMessage', function (message) {
+    // console.log('location Message', message);
+    const template = document.getElementById('list-item-location-template').innerHTML;
     const formatedTime = moment(message.createdAt).format('LT');
-    let listElement = document.createElement('li');
-    let anchorElement = document.createElement('a');
-    anchorElement.setAttribute('target', '_blank');
-    anchorElement.setAttribute('href', message.url);
-    listElement.innerHTML = `${message.from} ${formatedTime} : `;
-    anchorElement.innerText = `Current Location`;
-    listElement.appendChild(anchorElement);
-    document.getElementById('messages').append(listElement);
+    const html = Mustache.render(template, {
+        from: message.from,
+        url: message.url,
+        createdAt: formatedTime
+    })
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    document.getElementById('messages').appendChild(div);
+
+
+    // const formatedTime = moment(message.createdAt).format('LT');
+    // let listElement = document.createElement('li');
+    // let anchorElement = document.createElement('a');
+    // anchorElement.setAttribute('target', '_blank');
+    // anchorElement.setAttribute('href', message.url);
+    // listElement.innerHTML = `${message.from} ${formatedTime} : `;
+    // anchorElement.innerText = `Current Location`;
+    // listElement.appendChild(anchorElement);
+    // document.getElementById('messages').append(listElement);
 })
 
 
